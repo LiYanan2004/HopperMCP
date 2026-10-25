@@ -84,10 +84,6 @@ Run build commands from the repository root. Building requires a Swift 6 toolcha
 
 ### Bridge Plugin
 
-The bridge is compiled separately with Clang. It uses the SDK headers in `HopperSDK` and the Objective-C sources in `Plugin/`.
-
-Choose the SDK ABI for your Hopper version:
-
 | Hopper version | SDK ABI | Command |
 | --- | --- | --- |
 | 4.x | 4 | `python3 Scripts/build_plugin.py --sdk-version 4` |

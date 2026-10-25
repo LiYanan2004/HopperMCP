@@ -28,15 +28,27 @@ def main():
         shutil.copyfile(root / "Plugin/Info.plist", contents / "Info.plist")
         (contents / "Resources").mkdir()
         shutil.copyfile(root / "Plugin/api-native.json", contents / "Resources/api-native.json")
-        sources = sorted(root.glob("Plugin/*.m"))
+        objects = []
+        for source in sorted(root.glob("Plugin/*.m")):
+            object_path = Path(staging) / (source.stem + ".o")
+            subprocess.run([
+                "xcrun", "clang", "-fobjc-arc", "-fmodules", "-Wall", "-Wextra", "-Werror",
+                "-Wno-nullability-completeness", "-Wno-deprecated-declarations",
+                "-mmacosx-version-min=12.0", "-arch", options.architecture,
+                "-DHB_HOPPER_SDK_VERSION=" + str(options.sdk_version), "-I" + str(sdk),
+                "-c", str(source), "-o", str(object_path),
+            ], check=True)
+            objects.append(object_path)
         subprocess.run([
-            "xcrun", "clang", "-fobjc-arc", "-fmodules", "-Wall", "-Wextra", "-Werror",
-            "-Wno-nullability-completeness", "-Wno-deprecated-declarations",
-            "-mmacosx-version-min=12.0", "-arch", options.architecture,
-            "-DHB_HOPPER_SDK_VERSION=" + str(options.sdk_version), "-I" + str(sdk),
-            "-Wl,-no_fixup_chains,-no_data_const",
-            "-bundle", "-framework", "Foundation", *map(str, sources),
-            "-o", str(contents / "MacOS/HopperMCPBridge"),
+            "xcrun", "swiftc", "-swift-version", "6", "-O", "-whole-module-optimization",
+            "-warnings-as-errors", "-module-name", "HopperMCPBridge",
+            "-target", options.architecture + "-apple-macosx12.0",
+            "-import-objc-header", str(root / "Plugin/BridgingHeader.h"), "-I", str(sdk),
+            "-Xcc", "-DHB_HOPPER_SDK_VERSION=" + str(options.sdk_version),
+            "-Xcc", "-Wno-nullability-completeness",
+            "-emit-library", "-Xlinker", "-bundle", "-Xlinker", "-no_fixup_chains",
+            "-Xlinker", "-no_data_const", *map(str, sorted(root.glob("Plugin/*.swift"))),
+            *map(str, objects), "-o", str(contents / "MacOS/HopperMCPBridge"),
         ], check=True)
         subprocess.run(["codesign", "--force", "--sign", options.identity, str(bundle)], check=True)
         destinations = [options.output or root / "Build/HopperMCPBridge.hopperTool"]
