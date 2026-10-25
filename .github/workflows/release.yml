@@ -1,0 +1,92 @@
+name: Build and Release
+
+on:
+  pull_request:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Build bridge plugins
+        run: |
+          for sdk_version in 4 6; do
+            plugin_directory="Build/Release/v${sdk_version}"
+            for architecture in arm64 x86_64; do
+              python3 Scripts/build_plugin.py \
+                --sdk-version "$sdk_version" \
+                --architecture "$architecture" \
+                --output "$plugin_directory/$architecture/HopperMCPBridge.hopperTool"
+            done
+
+            plugin_bundle="$plugin_directory/HopperMCPBridge.hopperTool"
+            cp -R "$plugin_directory/arm64/HopperMCPBridge.hopperTool" "$plugin_bundle"
+            plugin_binary="$plugin_bundle/Contents/MacOS/HopperMCPBridge"
+            xcrun lipo -create \
+              "$plugin_directory/arm64/HopperMCPBridge.hopperTool/Contents/MacOS/HopperMCPBridge" \
+              "$plugin_directory/x86_64/HopperMCPBridge.hopperTool/Contents/MacOS/HopperMCPBridge" \
+              -output "$plugin_binary"
+            chmod +x "$plugin_binary"
+            xcrun lipo "$plugin_binary" -verify_arch arm64 x86_64
+            plutil -lint "$plugin_bundle/Contents/Info.plist"
+            codesign --force --sign - "$plugin_bundle"
+            codesign --verify --strict "$plugin_bundle"
+            ditto -c -k --norsrc --keepParent "$plugin_bundle" \
+              "Build/Release/HopperMCPBridge-v${sdk_version}.zip"
+          done
+
+      - name: Build MCP server
+        run: |
+          for architecture in arm64 x86_64; do
+            scratch_directory="Build/Release/server-$architecture"
+            swift build -c release --product HopperMCPServer \
+              --triple "$architecture-apple-macosx12.0" \
+              --scratch-path "$scratch_directory"
+            binary_directory=$(swift build -c release \
+              --triple "$architecture-apple-macosx12.0" \
+              --scratch-path "$scratch_directory" --show-bin-path)
+            cp "$binary_directory/HopperMCPServer" "Build/Release/HopperMCPServer-$architecture"
+          done
+
+          server_binary="Build/Release/HopperMCPServer"
+          xcrun lipo -create \
+            Build/Release/HopperMCPServer-arm64 \
+            Build/Release/HopperMCPServer-x86_64 \
+            -output "$server_binary"
+          chmod +x "$server_binary"
+          xcrun lipo "$server_binary" -verify_arch arm64 x86_64
+          "$server_binary" --help
+
+      - name: Publish GitHub Release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            Build/Release/HopperMCPBridge-v4.zip \
+            Build/Release/HopperMCPBridge-v6.zip \
+            Build/Release/HopperMCPServer \
+            --verify-tag \
+            --title "${RELEASE_TAG#v}" \
+            --generate-notes \
+            --draft
+          gh release edit "$RELEASE_TAG" --draft=false --latest
