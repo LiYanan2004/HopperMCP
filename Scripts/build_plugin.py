@@ -13,6 +13,7 @@ def main():
     parser.add_argument("--identity", default="-")
     parser.add_argument("--architecture", choices=("arm64", "x86_64"), default=platform.machine())
     parser.add_argument("--sdk-version", type=int, default=4)
+    parser.add_argument("--output", type=Path, help="Destination plugin bundle path")
     options = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     sdk = root / "HopperSDK"
@@ -38,7 +39,7 @@ def main():
             "-o", str(contents / "MacOS/HopperMCPBridge"),
         ], check=True)
         subprocess.run(["codesign", "--force", "--sign", options.identity, str(bundle)], check=True)
-        destinations = [root / "Build/HopperMCPBridge.hopperTool"]
+        destinations = [options.output or root / "Build/HopperMCPBridge.hopperTool"]
         for destination in destinations:
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copytree(bundle, destination, dirs_exist_ok=True, copy_function=shutil.copyfile)
