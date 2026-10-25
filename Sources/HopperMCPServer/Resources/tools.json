@@ -1,0 +1,1716 @@
+[
+  {
+    "description": "List all opened documents in Hopper. A document represents a file being disassembled. Returns an array of strings, each being the name of an opened document.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "list_documents",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Returns the name of the document that currently has the focus in the GUI.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "current_document",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Select the default document for this MCP bridge. Does not activate Hopper or change its key window.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document"
+      ]
+    },
+    "name": "set_current_document",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "List all segments of the specified document. Returns an array of objects, each containing the segment name, its start address (\"start\"), end address (\"end\"), and boolean flags indicating if it is writable and/or executable. The \"section\" property contains an array of sections, each described by its name, start address, and end address.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "list_segments",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "List all procedures (also known as functions) in the specified document, along with their entry point addresses. Returns an object mapping hexadecimal addresses to procedure names. The list is usually very large; use the \"search_procedures\" tool to find specific procedures.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "list_procedures",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "List basic information for all procedures (also known as functions) in the specified document. Returns a dictionary where each key is a procedure entry point, and the value is another dictionary containing the procedure name, the number of basic blocks, and its size in bytes.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "list_procedure_size",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "List all information regarding procedures in the specified document. Returns a dictionary where keys are procedure addresses, and values are detailed procedure descriptions. Each description contains the procedure name (if any), its entry point address (\"entrypoint\"), the number of basic blocks (\"basic_block_count\"), an array of basic block descriptions (\"basic_blocks\"), and the total length in bytes (\"length\"). Each basic block description contains its start and end addresses (\"from\" and \"to\", with the end address included). If available, the procedure signature is provided as a C-like function signature (\"signature\"). Local variables are listed in the \"locals\" array, each containing a name and its stack displacement.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "list_procedure_info",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "List all strings defined in the specified document along with their addresses. Returns an object mapping addresses to string values. The list is usually very large; use the \"search_strings\" tool to find specific strings.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "list_strings",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Search for strings in the specified document by filtering all strings using a regular expression. Returns an object mapping addresses of found strings to their values.",
+    "inputSchema": {
+      "properties": {
+        "case_sensitive": {
+          "description": "A boolean indicating if the regular expression should be case sensitive.",
+          "type": "boolean"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "pattern": {
+          "description": "A regular expression used to filter the strings.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "search_strings",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Search for procedures in the specified document by filtering procedure names using a regular expression. Returns an object mapping addresses of found procedures to their names.",
+    "inputSchema": {
+      "properties": {
+        "case_sensitive": {
+          "description": "A boolean indicating if the regular expression should be case sensitive.",
+          "type": "boolean"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "pattern": {
+          "description": "A regular expression used to filter the procedure names.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "search_procedures",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Get detailed information about a specific procedure in the specified document. This tool can also be used to find a procedure by its exact name or address. Procedures are also called functions. Returns a dictionary containing the procedure name (if any), its entry point address (\"entrypoint\"), the number of basic blocks (\"basic_block_count\"), an array of basic block descriptions (\"basic_blocks\"), and the total length in bytes (\"length\"). Each basic block description contains its start and end addresses (\"from\" and \"to\", with the end address included). If available, the procedure signature is provided as a C-like function signature (\"signature\"). Local variables are listed in the \"locals\" array, each containing a name and its stack displacement.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "procedure": {
+          "description": "The name or address of the procedure. Leave unset for the current procedure.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "procedure_info",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Find the entry point of a given procedure in the specified document by its name, or by any hexadecimal address within the procedure.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "procedure": {
+          "description": "The name of the procedure, or any address within it as a hexadecimal number.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "procedure_address",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Get the current cursor address in the specified document. Returns a hexadecimal number.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "current_address",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Get the name of the procedure at the current address in the specified document.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "current_procedure",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Move the cursor to a given address in the specified document, which will become the current address.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address in hexadecimal, or a label name.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "goto_address",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Disassemble and generate the assembly code for a procedure in the specified document. Returns a string containing the assembly code of the procedure.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "procedure": {
+          "description": "The name or address of the procedure as a hexadecimal number. Leave unset for the current procedure.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "procedure_assembly",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Decompile a procedure in the specified document into a C-like pseudo-code representation. This helps in understanding the logic of the procedure. Note that generating pseudo-code may take a very long time for complex procedures with many basic blocks. It is recommended to limit the use of this tool to procedures with fewer than fifty basic blocks.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "procedure": {
+          "description": "The name or address of the procedure. Leave unset for the current procedure.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "procedure_pseudo_code",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "List all procedures that call a given procedure in the specified document. Returns a list of names of the procedures that call the specified one.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "procedure": {
+          "description": "The name or address of the procedure. Leave unset for the current procedure.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "procedure_callers",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "List all procedures called by a given procedure in the specified document. Returns a list of names of the procedures that the specified one calls.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "procedure": {
+          "description": "The name or address of the procedure. Leave unset for the current procedure.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "procedure_callees",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "List all addresses referencing a given address in the specified document. Returns a list of addresses in hexadecimal notation that reference the specified address. Each address corresponds to an instruction that jumps to the requested address.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address for which to get the list of referencing addresses. Leave unset for the current address.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "xrefs",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Get the comment at a given address in the specified document, if any exists.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address at which to get the comment. Leave unset for the current address.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "comment",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Get the inline comment at a given address in the specified document, if any exists.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address at which to get the inline comment. Leave unset for the current address.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "inline_comment",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Set a comment at a given address in the specified document.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address at which to set the comment. Leave unset for the current address.",
+          "type": "string"
+        },
+        "comment": {
+          "description": "The comment to be set. Leave unset to remove the comment.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "set_comment",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Set an inline comment at a given address in the specified document.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address at which to set the inline comment. Leave unset for the current address.",
+          "type": "string"
+        },
+        "comment": {
+          "description": "The inline comment to be set. Leave unset to remove the comment.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "set_inline_comment",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Get the address appearing after a given address in the disassembly of the specified document.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address for which to get the next address. Leave unset for the current address.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "next_address",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Get the address appearing before a given address in the disassembly of the specified document.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address for which to get the previous address. Leave unset for the current address.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "prev_address",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "List all addresses that have a name (also called label) in the specified document. Returns an object mapping addresses to their assigned names.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "list_names",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Search for a label with a name matching a given pattern in the specified document. Returns an object mapping addresses to their names.",
+    "inputSchema": {
+      "properties": {
+        "case_sensitive": {
+          "description": "A boolean indicating if the regular expression should be case sensitive.",
+          "type": "boolean"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "pattern": {
+          "description": "A regular expression used to filter the label names.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "search_name",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Get the name (also called label) associated with an address in the specified document.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address for which to get the name (label). Leave unset for the current address.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "address_name",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Set the name (also called label) of an address in the specified document. To remove a name, pass an empty string.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address at which to set the name (label). Leave unset for the current address.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "name": {
+          "description": "The name to give to the address. Leave unset to remove the name.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "set_address_name",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Set the names (also known as labels) of multiple addresses at once in the specified document. This is the preferred way to efficiently change names of multiple addresses.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "names": {
+          "description": "An object where each key is a hexadecimal address string, and the associated value is the name to be set at this address.",
+          "type": "object"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "set_addresses_names",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Get a list of all bookmarks defined in the specified document. A bookmark is a place of interest in a document. Returns a list of objects, each describing a bookmark with an optional name and an address in hexadecimal.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "list_bookmarks",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Set a bookmark at a given address in the specified document. A bookmark is a place of interest in a document and can optionally have a name.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address at which to set the bookmark. Leave unset for the current address.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "name": {
+          "description": "The optional name to give to the bookmark. Leave unset for no name.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "set_bookmark",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "description": "Remove a bookmark at a given address in the specified document.",
+    "inputSchema": {
+      "properties": {
+        "address": {
+          "description": "The address at which to remove the bookmark. Leave unset for the current address.",
+          "type": "string"
+        },
+        "document": {
+          "description": "Exact name from list_documents, or a document reference from list_document_objects.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "$ref"
+              ],
+              "properties": {
+                "$ref": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "unset_bookmark",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "bridge_status",
+    "description": "Inspect the plugin process, Hopper version, document count and SDK ABI.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "list_document_objects",
+    "description": "List exact document names with stable session-scoped object references.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "get_document_info",
+    "description": "Read the document path, base address, entry point, analysis state and waiting state.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "description": "Exact document name or object reference."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "get_object",
+    "description": "Resolve a Hopper object for further API discovery and calls. References expire when their document closes or Hopper restarts.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "description": "Exact document name or object reference."
+        },
+        "target": {
+          "description": "Hopper root kind (services, document, file, segment, section, procedure, basic_block, cpu_context, type), or {$ref:...}.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "kind": {
+          "description": "Hopper root kind (services, document, file, segment, section, procedure, basic_block, cpu_context, type), or {$ref:...}.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Hexadecimal address or exact symbol name."
+        },
+        "procedure": {
+          "type": "string",
+          "description": "Procedure address or name."
+        },
+        "index": {
+          "type": "integer",
+          "description": "Zero-based object index."
+        },
+        "name": {
+          "type": "string",
+          "description": "Object name."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "list_api",
+    "description": "Search the methods actually implemented by a live Hopper object. Returns Objective-C selectors and runtime argument/return type encodings. Lifecycle and window activation methods are excluded.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "description": "Exact document name or object reference."
+        },
+        "target": {
+          "description": "Hopper root kind (services, document, file, segment, section, procedure, basic_block, cpu_context, type), or {$ref:...}.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "kind": {
+          "description": "Hopper root kind (services, document, file, segment, section, procedure, basic_block, cpu_context, type), or {$ref:...}.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Hexadecimal address or exact symbol name."
+        },
+        "procedure": {
+          "type": "string",
+          "description": "Procedure address or name."
+        },
+        "index": {
+          "type": "integer",
+          "description": "Zero-based object index."
+        },
+        "name": {
+          "type": "string",
+          "description": "Object name."
+        },
+        "pattern": {
+          "type": "string",
+          "description": "Case-insensitive method-name regular expression."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Nonnegative page offset."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Page size, 1 to 1000; default 100."
+        },
+        "include_private": {
+          "type": "boolean",
+          "description": "Include native private methods for inspection; default false."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "invoke_api",
+    "description": "Invoke a native Hopper method using its runtime signature. Supports objects/references, numeric scalars, ranges, structs and pointer output buffers. Read the method declaration first. Callback blocks accept null; pointer/union/class returns currently require an adapter. Window activation and object-lifetime selectors are rejected.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "description": "Exact document name or object reference."
+        },
+        "target": {
+          "description": "Hopper root kind (services, document, file, segment, section, procedure, basic_block, cpu_context, type), or {$ref:...}.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "kind": {
+          "description": "Hopper root kind (services, document, file, segment, section, procedure, basic_block, cpu_context, type), or {$ref:...}.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Hexadecimal address or exact symbol name."
+        },
+        "procedure": {
+          "type": "string",
+          "description": "Procedure address or name."
+        },
+        "index": {
+          "type": "integer",
+          "description": "Zero-based object index."
+        },
+        "name": {
+          "type": "string",
+          "description": "Object name."
+        },
+        "selector": {
+          "type": "string",
+          "description": "Exact Objective-C selector from list_api."
+        },
+        "arguments": {
+          "type": "array",
+          "description": "Positional Objective-C arguments, excluding self and _cmd. Use {$ref:...}, {$data:base64}, {$range:{location,length}}, {$out:true}, or {$buffer:base64,size:N} as needed."
+        },
+        "allow_private": {
+          "type": "boolean",
+          "description": "Allow a private selector after checking its real implementation and object argument types. Default false."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "release_objects",
+    "description": "Release bridge-owned references when no longer needed.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "references"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "api_documentation",
+    "description": "Search bundled native SDK declarations, Python API documentation and SDK constants. This is documentation; list_api is the authority for method availability in the connected Hopper version.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": [
+            "native",
+            "python",
+            "constants"
+          ]
+        },
+        "pattern": {
+          "type": "string",
+          "description": "Case-insensitive documentation regular expression."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Nonnegative page offset."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Page size, 1 to 500; default 50."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "read_bytes",
+    "description": "Read 1 byte to 1 MiB from mapped addresses. Returns both hex and base64.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "description": "Exact document name or object reference."
+        },
+        "address": {
+          "type": "string",
+          "description": "Hexadecimal address or exact symbol name."
+        },
+        "length": {
+          "type": "integer",
+          "description": "Number of bytes, 1 to 1048576."
+        }
+      },
+      "required": [
+        "address",
+        "length"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "write_bytes",
+    "description": "Patch mapped document bytes. Validates the whole range first and restores earlier bytes if a write fails. Changes stay in the Hopper database until explicitly saved.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "description": "Exact document name or object reference."
+        },
+        "address": {
+          "type": "string",
+          "description": "Hexadecimal address or exact symbol name."
+        },
+        "hex": {
+          "type": "string",
+          "description": "Hexadecimal byte pairs; whitespace is allowed."
+        }
+      },
+      "required": [
+        "address",
+        "hex"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "disassemble",
+    "description": "Render a bounded number of instructions with addresses and lengths.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "description": "Exact document name or object reference."
+        },
+        "address": {
+          "type": "string",
+          "description": "Hexadecimal address or exact symbol name."
+        },
+        "count": {
+          "type": "integer",
+          "description": "Instruction count, 1 to 4096; default 32."
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "assemble",
+    "description": "Assemble one instruction through Hopper without patching the document.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "description": "Exact document name or object reference."
+        },
+        "address": {
+          "type": "string",
+          "description": "Hexadecimal address or exact symbol name."
+        },
+        "instruction": {
+          "type": "string",
+          "description": "Instruction text using the current Hopper syntax."
+        }
+      },
+      "required": [
+        "address",
+        "instruction"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "list_types",
+    "description": "List Hopper type-database objects for generic API access.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "description": "Exact document name or object reference."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Nonnegative page offset."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Page size, 1 to 1000; default 100."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "save_document",
+    "description": "Save the current Hopper database to an explicit absolute .hop path, or its existing path.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "description": "Exact document name or object reference."
+        },
+        "path": {
+          "type": "string",
+          "description": "Absolute output .hop path. Provide a path for a new unsaved document."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  }
+]
