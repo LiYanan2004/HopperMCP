@@ -20,7 +20,7 @@ final class HopperBridgePlugin: NSObject, HopperTool {
     }
     
     func pluginUUID() -> HPHopperUUID {
-        ervices.uuid(with: "BD330D85-FD77-41D8-954D-BB0658D21D51")
+        services.uuid(with: "BD330D85-FD77-41D8-954D-BB0658D21D51")
     }
     
     func pluginName() -> String {
