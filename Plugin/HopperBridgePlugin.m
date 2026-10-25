@@ -1,11 +1,17 @@
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 #import "HopperTool.h"
 #import "HPHopperServices.h"
 #import "HBBridgeServer.h"
 
+// Use notification names directly to avoid AppKit global symbol bindings in Hopper's plugin loader.
+static NSNotificationName const HBApplicationDidFinishLaunchingNotification = @"NSApplicationDidFinishLaunchingNotification";
+static NSNotificationName const HBMenuDidAddItemNotification = @"NSMenuDidAddItemNotification";
+static NSNotificationName const HBMenuDidRemoveItemNotification = @"NSMenuDidRemoveItemNotification";
+
 @interface HopperBridgePlugin : NSObject <HopperTool>
 @property(nonatomic, strong) NSObject<HPHopperServices> *services;
 @property(nonatomic, strong) HBBridgeServer *bridgeServer;
+@property(nonatomic, weak) NSMenuItem *toolPluginsMenuItem;
 @end
 
 @implementation HopperBridgePlugin
@@ -29,11 +35,49 @@
         self.services = services;
         self.bridgeServer = [[HBBridgeServer alloc] initWithServices:services];
         [self.bridgeServer start];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                selector:@selector(configureToolPluginsMenuVisibility:)
+                                                    name:HBApplicationDidFinishLaunchingNotification
+                                                  object:[NSClassFromString(@"NSApplication") sharedApplication]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self configureToolPluginsMenuVisibility:nil];
+        });
     }
     return self;
 }
+// Keep the bridge running in the background without adding menu commands.
 - (NSArray<NSDictionary<NSString *, id> *> *)toolMenuDescription {
-    return @[@{HPM_TITLE: @"MCP Bridge Status", HPM_SELECTOR: @"showBridgeStatus:"}];
+    return @[];
+}
+// Observe the Tool Plugins submenu so its visibility follows commands added or removed by other plugins.
+- (void)configureToolPluginsMenuVisibility:(NSNotification *)notification {
+    (void)notification;
+    NSApplication *application = [NSClassFromString(@"NSApplication") sharedApplication];
+    NSMenuItem *menuItem = [application.mainMenu itemWithTitle:@"Tool Plugins"];
+    if (menuItem == nil || menuItem.submenu == nil) return;
+    if (self.toolPluginsMenuItem != menuItem) {
+        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+        NSMenu *previousMenu = self.toolPluginsMenuItem.submenu;
+        if (previousMenu != nil) {
+            [notificationCenter removeObserver:self name:HBMenuDidAddItemNotification object:previousMenu];
+            [notificationCenter removeObserver:self name:HBMenuDidRemoveItemNotification object:previousMenu];
+        }
+        self.toolPluginsMenuItem = menuItem;
+        [notificationCenter addObserver:self selector:@selector(updateToolPluginsMenuVisibility:)
+                                   name:HBMenuDidAddItemNotification object:menuItem.submenu];
+        [notificationCenter addObserver:self selector:@selector(updateToolPluginsMenuVisibility:)
+                                   name:HBMenuDidRemoveItemNotification object:menuItem.submenu];
+    }
+    [self updateToolPluginsMenuVisibility:nil];
+}
+// Hide Hopper's Tool Plugins menu while it is empty and show it when other plugins provide commands.
+- (void)updateToolPluginsMenuVisibility:(NSNotification *)notification {
+    (void)notification;
+    NSMenuItem *menuItem = self.toolPluginsMenuItem;
+    menuItem.hidden = menuItem.submenu.numberOfItems == 0;
+}
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 - (void)showBridgeStatus:(id)sender {
     (void)sender;
